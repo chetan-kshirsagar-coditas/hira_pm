@@ -183,7 +183,7 @@ pipeline {
                 dir("${BACKEND_PATH}") {
                     sh '''
                         
-                        sudo apt install python3-poetry
+                        apt install python3-poetry
                         python3 -m poetry config virtualenvs.in-project true
 
                         python3 -m poetry install
