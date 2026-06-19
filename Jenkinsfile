@@ -178,25 +178,26 @@ pipeline {
         }
 
 
-        stage('Run Alembic Migrations') {
-        steps {
-            dir("${BACKEND_PATH}") {
-                sh '''
-                    export DB_URL="$DB_URL"
+       stage('Run Alembic Migrations') {
+    steps {
+        dir("${BACKEND_PATH}") {
+            sh '''
+                export DB_URL="$DB_URL"
 
-                    python3 -m pip install --upgrade pip
-                    python3 -m pip install poetry
+                python3 -m pip install --upgrade pip
+                python3 -m pip install poetry
 
-                    poetry config virtualenvs.in-project true
+                poetry config virtualenvs.in-project true
 
-                    poetry install --no-interaction --no-root
+                poetry install --no-interaction --no-root
 
-                    poetry run alembic upgrade head
-                '''
-            }
+                python3 -c "import os; print('DB_URL exists:', bool(os.getenv('DB_URL')))"
+
+                poetry run alembic upgrade head
+            '''
         }
     }
-
+}
 
         stage('Package Backend') {
             steps {
