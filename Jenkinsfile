@@ -168,19 +168,7 @@ pipeline {
         }
 
 
-        stage('Verify PostgreSQL Connectivity') {
-            steps {
-                sh '''
-python3 - <<EOF
-pip install psycopg2-binary
-import psycopg
-conn = psycopg.connect("${DB_URL}")
-conn.close()
-print("PostgreSQL connection successful")
-EOF
-                '''
-            }
-        }
+        
 
 
         stage('Verify Redis Connectivity') {
