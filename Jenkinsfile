@@ -179,25 +179,23 @@ pipeline {
 
 
         stage('Run Alembic Migrations') {
-            steps {
-                dir("${BACKEND_PATH}") {
-                    sh '''
-                        
-                        apt install python3-poetry
-                        python3 -m poetry config virtualenvs.in-project true
+        steps {
+            dir("${BACKEND_PATH}") {
+                sh '''
+                    export DB_URL="$DB_URL"
 
-                        python3 -m poetry install
-                        .venv/Scripts/activate.ps1
+                    python3 -m pip install --upgrade pip
+                    python3 -m pip install poetry
 
-                        python3 -m poetry run alembic upgrade head
+                    poetry config virtualenvs.in-project true
 
-                        python3 -m poetry run uvicorn main:app --reload
-                        export DB_URL=$DB_URL
+                    poetry install --no-interaction --no-root
 
-                    '''
-                }
-            }        
+                    poetry run alembic upgrade head
+                '''
+            }
         }
+    }
 
 
         stage('Package Backend') {
@@ -208,7 +206,7 @@ pipeline {
                           -x "*.git*" \
                           -x "__pycache__/*" \
                           -x "*.pyc" \
-                          -x "venv/*"
+                          -x ".venv/*"
                     '''
                 }
             }
