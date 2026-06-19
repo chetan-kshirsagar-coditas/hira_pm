@@ -32,6 +32,7 @@ pipeline {
             steps {
                 sh 'npm install -g pnpm'
                 sh 'pnpm --version'
+                sh 'pnpm add -D sass-embedded'
             }
         }
 
