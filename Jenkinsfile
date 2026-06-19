@@ -187,7 +187,7 @@ pipeline {
                         poetry config virtualenvs.in-project true
 
                         poetry install
-                        .venv\Scripts\activate.ps1
+                        .venv/Scripts/activate.ps1
 
                         poetry run alembic upgrade head
 
