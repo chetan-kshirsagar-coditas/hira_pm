@@ -182,20 +182,21 @@ pipeline {
             steps {
                 dir("${BACKEND_PATH}") {
                     sh '''
-                        python3 -m venv venv
-                        . venv/bin/activate
-
+                        
                         pip install poetry
+                        poetry config virtualenvs.in-project true
+
                         poetry install
+                        .venv\Scripts\activate.ps1
 
+                        poetry run alembic upgrade head
 
+                        poetry run uvicorn main:app --reload
                         export DB_URL=$DB_URL
 
-
-                        alembic upgrade head
                     '''
                 }
-            }
+            }        
         }
 
 
