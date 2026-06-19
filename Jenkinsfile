@@ -182,10 +182,15 @@ pipeline {
     steps {
         dir("${BACKEND_PATH}") {
             sh '''
+                set -e
+
                 export DB_URL="$DB_URL"
 
-                python3 -m pip install --upgrade pip
-                python3 -m pip install poetry
+                python3 -m venv .venv
+                . .venv/bin/activate
+
+                pip install --upgrade pip
+                pip install poetry
 
                 poetry config virtualenvs.in-project true
 
