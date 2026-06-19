@@ -185,8 +185,8 @@ pipeline {
                         python3 -m venv venv
                         . venv/bin/activate
 
-
-                        pip install -r requirements.txt
+                        pip install poetry
+                        poetry install
 
 
                         export DB_URL=$DB_URL
