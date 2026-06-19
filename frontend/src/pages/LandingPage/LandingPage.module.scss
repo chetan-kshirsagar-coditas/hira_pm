@@ -1,0 +1,26 @@
+.landingPage {
+    display: flex;
+    padding: 2rem;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.landingPageSection {
+    background-color: white;
+    padding: 1rem;
+    width: 50%;
+}
+
+.leftSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.rightSection { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url(../../assets/login_bg.svg); 
+  background-position: center;
+}

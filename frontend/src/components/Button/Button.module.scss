@@ -1,0 +1,45 @@
+@use "../../styles/mixins" as *;
+
+$base-color: black;
+$base-bg-color: #ccc;
+.button{
+    color: var(--color, $base-color);
+    background-color: var(--background-color, $base-bg-color);
+    border: none;
+    padding: 0.25rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.primary {
+    @extend .button;
+    --color: white;
+    --background-color: #1662db
+}
+.secondary {
+    @extend .button;
+    --color: white;
+    --background-color: #cf9f46
+}
+.tertiary {
+    @extend .button;
+    --color: white;
+    --background-color: #c74040
+}
+
+.outline-secondary{
+    @extend .button;
+    @include box-shadow;
+    --background-color: rgb(246, 174, 115);
+}
+
+.outline-tertiary{
+    @extend .button;
+    @include box-shadow;
+    --background-color: rgb(246, 115, 115);
+}
+.outline-success{
+    @extend .button;
+    @include box-shadow;
+    --background-color: rgb(92, 222, 105);
+}

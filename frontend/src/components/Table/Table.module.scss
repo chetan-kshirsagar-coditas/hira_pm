@@ -1,0 +1,21 @@
+.table {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.tableHeadCell {
+    background-color: rgb(240, 239, 239);
+    padding: 0.25rem 1rem;
+    border-left: thin solid;
+    border-bottom: thin solid;
+    font-size: smaller;
+}
+
+.tableCell {
+    
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-size: 0.9em;
+    font-size: smaller;
+    border-bottom: thin solid #dedede;
+}

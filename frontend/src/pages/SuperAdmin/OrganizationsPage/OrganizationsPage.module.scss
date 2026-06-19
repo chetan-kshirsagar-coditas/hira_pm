@@ -1,0 +1,15 @@
+.organizationsPage {
+    padding: 0.5rem;
+    .orgActionsContainer {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .actionBtnCell{
+        button{
+            font-size: 0.8em;
+            padding: 0.2rem 0.75rem;
+            margin: 0 0.2rem;
+        }
+    }
+}

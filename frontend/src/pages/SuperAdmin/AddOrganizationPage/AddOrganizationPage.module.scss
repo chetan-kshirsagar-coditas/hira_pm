@@ -1,0 +1,22 @@
+@use "@/components/Form/Form" as *;
+
+.addOrgForm{
+    width: 30rem;  
+
+    .formButtonsContainer{
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+
+        button{
+            width: 50%;
+            padding: 0.5rem;
+        }
+    }
+
+    .formTitle{
+        text-align: center;
+        font-size: 1.25em;
+    }
+}

@@ -1,0 +1,27 @@
+.snackbarContainer {
+    position: absolute;
+    right: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    bottom: 8px;
+    z-index: 10;
+
+    .common {
+        padding: 0.5rem 1.5rem;
+        border: thin solid;
+        border-radius: 4px;
+        font-size: 0.9em
+    }
+    .success {
+        @extend .common;
+        background-color: lightgreen;
+        border: thin solid green
+    }
+
+    .error {
+        @extend .common;
+        border: thin solid red;
+        background-color: rgb(249, 164, 164);
+    }
+}

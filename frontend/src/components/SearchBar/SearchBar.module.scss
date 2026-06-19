@@ -1,0 +1,26 @@
+.searchBar {
+    padding:0.3rem 0.5rem;
+    border: thin solid #ccc;
+    border-radius: 4px;
+    width: 40%;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    i {
+        opacity: 0.6;
+        font-size: 0.9em;
+    }
+
+    input {
+        border: none;
+        // padding: 0.25rem;
+        width: 100%;
+
+        &:focus {
+        outline: none;
+    }
+    }
+
+
+}

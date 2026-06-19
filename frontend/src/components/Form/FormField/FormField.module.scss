@@ -1,0 +1,16 @@
+.formField{
+    // background-color: rosybrown;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    .validationErrorMsg{
+        color: red;
+        font-size: small;
+    }
+
+    .asterisk{
+        color: red;
+        font-size: small;
+    }
+}

@@ -1,0 +1,30 @@
+
+.header {
+    border-bottom: thin solid #cccccc7f;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    font-family: "Ubuntu", sans-serif;
+
+    .navbar {
+        width: 25%;
+    }
+    .navbar > div {
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+
+
+.Hira {
+    font-size: 1.25rem;
+    font-weight: 400;
+    font-style: normal;
+
+    &:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+}

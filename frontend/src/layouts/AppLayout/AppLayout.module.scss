@@ -1,0 +1,62 @@
+.layoutContainer{
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+
+    .leftPanel{
+        width: 15%;
+        padding: 1rem;
+        border-right: thin solid #cccccc;
+
+        .navContainer{
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+
+            .navLink{
+                text-decoration: none;
+                color: black;
+                font-size: 0.9em;
+                padding: 0.25rem 0;
+                text-align: center;
+                border-radius: 4px;
+                transition: all 0.3s ease-in-out;
+
+                &:hover{
+                    background-color: #e3e3e3;
+                    // border-left: 2px solid;
+                    // border-bottom: 2px solid;
+                }
+            }
+        }
+
+        .hiraContainer{
+            // background-color: #ccc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem;
+
+            img{
+                width: 33%;
+            }
+            
+            span{
+                font-size: 1.25rem;
+            }
+        }
+
+    }
+    .rightPanel{
+        width: 85%;
+
+        .layoutNav{
+            padding: 0.5rem;
+            display: flex;
+            justify-content: end;
+            gap: 0.75rem;
+            border-bottom: thin solid #ccc;
+        }
+    }
+}

@@ -1,0 +1,17 @@
+@use "../../styles/mixins" as *;
+
+.unauthorizedPage {
+    min-height: 100vh;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0.1)), url(../../assets/unauthorizedBG.svg);
+    @include flex-center;
+    
+    
+    .displayUnauthorized {
+        padding: 1rem;
+        width: 35%;
+        background-color: white;
+        @include flex-center;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
