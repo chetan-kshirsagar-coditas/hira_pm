@@ -172,6 +172,7 @@ pipeline {
             steps {
                 sh '''
 python3 - <<EOF
+pip install psycopg2-binary
 import psycopg
 conn = psycopg.connect("${DB_URL}")
 conn.close()
