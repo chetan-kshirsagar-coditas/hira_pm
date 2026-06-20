@@ -211,30 +211,4 @@ pipeline {
             }
         }
 
-        stage('Run Alembic Migrations') {
-            steps {
-                dir("${BACKEND_PATH}") {
-                    sh '''
-                        set -e
-
-                        export DB_URL="$DB_URL"
-
-                        python3 -m venv .venv
-                        . .venv/bin/activate
-
-                        pip install --upgrade pip
-                        pip install poetry
-
-                        poetry config virtualenvs.in-project true
-
-                        poetry install --no-interaction --no-root
-
-                        python3 -c "import os; print('DB_URL exists:', bool(os.getenv('DB_URL')))"
-
-                        poetry run alembic upgrade head
-                    '''
-                }
-            }
-        }
-    }
-}
+       
