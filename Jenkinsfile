@@ -170,39 +170,11 @@ pipeline {
 
         
 
-
         stage('Verify Redis Connectivity') {
             steps {
                 echo 'Redis should already exist. Verify connectivity using application health checks or Azure Monitor.'
             }
         }
-
-
-       stage('Run Alembic Migrations') {
-    steps {
-        dir("${BACKEND_PATH}") {
-            sh '''
-                set -e
-
-                export DB_URL="$DB_URL"
-
-                python3 -m venv .venv
-                . .venv/bin/activate
-
-                pip install --upgrade pip
-                pip install poetry
-
-                poetry config virtualenvs.in-project true
-
-                poetry install --no-interaction --no-root
-
-                python3 -c "import os; print('DB_URL exists:', bool(os.getenv('DB_URL')))"
-
-                poetry run alembic upgrade head
-            '''
-        }
-    }
-}
 
         stage('Package Backend') {
             steps {
@@ -218,7 +190,6 @@ pipeline {
             }
         }
 
-
         stage('Deploy Backend') {
             steps {
                 sh '''
@@ -230,7 +201,6 @@ pipeline {
             }
         }
 
-
         stage('Restart App Service') {
             steps {
                 sh '''
@@ -240,23 +210,29 @@ pipeline {
                 '''
             }
         }
-    }
 
+        stage('Run Alembic Migrations') {
+            steps {
+                dir("${BACKEND_PATH}") {
+                    sh '''
+                        set -e
 
-    post {
-        success {
-            echo "Version ${env.APP_VERSION} deployed successfully."
+                        export DB_URL="$DB_URL"
+
+                        python3 -m venv .venv
+                        . .venv/bin/activate
+
+                        pip install --upgrade pip
+                        pip install poetry
+
+                        poetry config virtualenvs.in-project true
+
+                        poetry install --no-interaction --no-root
+
+                        python3 -c "import os; print('DB_URL exists:', bool(os.getenv('DB_URL')))"
+
+                        poetry run alembic upgrade head
+                    '''
+                }
+            }
         }
-
-
-        failure {
-            echo "Deployment failed. Check logs above."
-        }
-
-
-        always {
-            cleanWs()
-        }
-    }
-}
-
