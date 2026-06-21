@@ -180,7 +180,11 @@ stage('Package Backend') {
     steps {
         dir("${BACKEND_PATH}") {
             sh '''
-                poetry self add poetry-plugin-export || true
+                curl -sSL https://install.python-poetry.org | python3 -
+
+                export PATH="$HOME/.local/bin:$PATH"
+
+                poetry --version
 
                 poetry export \
                     -f requirements.txt \
@@ -191,16 +195,13 @@ stage('Package Backend') {
                     -x "*.git*" \
                     -x "__pycache__/*" \
                     -x "*.pyc" \
-                    -x ".venv/*" \
-                    -x ".pytest_cache/*" \
-                    -x ".mypy_cache/*"
+                    -x ".venv/*"
 
                 unzip -l ../backend.zip | head -30
             '''
         }
     }
 }
-
 stage('Deploy Backend') {
 steps {
 sh '''
