@@ -164,7 +164,7 @@ stage('Run Alembic Migrations') {
                 sh '''
                     cp $ENV_FILE .env
 
-                    source .venv/bin/activate
+                    //source .venv/bin/activate
 
                     poetry run alembic upgrade head
                 '''
