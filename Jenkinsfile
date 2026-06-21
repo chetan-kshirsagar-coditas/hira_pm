@@ -231,7 +231,7 @@ sh '''
 sleep 30
 
 curl --fail \
-https://priyanshube..azurewebsites.net/health
+https://priyanshube.azurewebsites.net/health
 '''
 }
 }
