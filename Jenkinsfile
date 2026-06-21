@@ -167,7 +167,7 @@ stage('Run Alembic Migrations') {
                 
                     cp $ENV_FILE .env
                     . .venv/bin/activate
-                    env | grep DB_
+                    
                     
                     poetry run alembic upgrade head
                 '''
