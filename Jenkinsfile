@@ -146,8 +146,10 @@ python3 -m venv .venv
 . .venv/bin/activate
 
 pip install --upgrade pip
-pip install .
+
 pip install poetry
+
+poetry install --no-root
 
 
 '''
@@ -163,7 +165,7 @@ stage('Run Alembic Migrations') {
             ]) {
                 sh '''
                     cp $ENV_FILE .env
-
+                    . .venv/bin/activate
                     
                     poetry run alembic upgrade head
                 '''
