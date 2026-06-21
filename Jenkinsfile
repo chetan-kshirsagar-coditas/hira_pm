@@ -156,18 +156,21 @@ poetry install --no-interaction --no-root
 }
 
 stage('Run Alembic Migrations') {
-steps {
-dir("${BACKEND_PATH}") {
-withEnv(["DB_URL=${DB_URL}"]) {
+    steps {
+        dir('backend') {
+            withCredentials([
+                file(credentialsId: 'backend-env-file', variable: 'ENV_FILE')
+            ]) {
+                sh '''
+                    cp $ENV_FILE .env
 
-sh '''
-. .venv/bin/activate
+                    source .venv/bin/activate
 
-poetry run alembic upgrade head
-'''
-}
-}
-}
+                    poetry run alembic upgrade head
+                '''
+            }
+        }
+    }
 }
 
 stage('Package Backend') {
