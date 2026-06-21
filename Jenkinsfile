@@ -164,8 +164,10 @@ stage('Run Alembic Migrations') {
                 file(credentialsId: 'backend-env-file', variable: 'ENV_FILE')
             ]) {
                 sh '''
+                
                     cp $ENV_FILE .env
                     . .venv/bin/activate
+                    env | grep DB_
                     
                     poetry run alembic upgrade head
                 '''
