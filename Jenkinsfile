@@ -103,6 +103,7 @@ stage('Install Frontend Dependencies') {
 steps {
 dir("${STATIC_APP_PATH}") {
 sh 'pnpm install --frozen-lockfile'
+sh 'pnpm add -D sass-embedded'
 }
 }
 }
