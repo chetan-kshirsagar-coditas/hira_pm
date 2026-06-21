@@ -1,216 +1,236 @@
 pipeline {
-    agent any
+agent any
 
+environment {
+SWA_DEPLOYMENT_TOKEN = credentials('swa_deployment_token')
 
-    environment {
-        // Azure credentials
-        SWA_DEPLOYMENT_TOKEN = credentials('swa_deployment_token')
+AZURE_CLIENT_ID = credentials('azure_client_id')
+AZURE_CLIENT_SECRET = credentials('azure_client_secret')
+AZURE_TENANT_ID = credentials('azure_tenant_id')
+AZURE_SUBSCRIPTION_ID = credentials('azure_subscription_id')
 
+DB_URL = credentials('db_url')
 
-        AZURE_CLIENT_ID = credentials('azure_client_id')
-        AZURE_CLIENT_SECRET = credentials('azure_client_secret')
-        AZURE_TENANT_ID = credentials('azure-tenant-id')
-        AZURE_SUBSCRIPTION_ID = credentials('azure_subscription_id')
+AZURE_RESOURCE_GROUP = 'taskflow-project-rg'
 
+SWA_APP_NAME = 'taskflow-frontend'
+APP_SERVICE = 'taskflow-api'
 
-        // Database (required only because Jenkins runs Alembic)
-        DB_URL = credentials('db_url')
+STATIC_APP_PATH = 'frontend'
+BACKEND_PATH = 'backend'
 
+VERSION_FILE = '.version'
+}
 
-        // Azure resources
-        AZURE_RESOURCE_GROUP = 'PriyanshuChetanRG'
-        SWA_APP_NAME = 'chetansFE'
-        APP_SERVICE = 'PriyanshusBE'
+tools {
+nodejs 'NodeJS-20'
+}
 
+stages {
 
-        STATIC_APP_PATH = 'frontend'
-        BACKEND_PATH = 'backend'
+stage('Checkout') {
+steps {
+checkout scm
 
+sh 'git fetch --tags || true'
+}
+}
 
-        VERSION_FILE = '.version'
-    }
+stage('Calculate Version') {
+steps {
+script {
 
+def commitMsg = sh(
+script: "git log -1 --pretty=%B",
+returnStdout: true
+).trim()
 
-    tools {
-        nodejs 'NodeJS-20'
-    }
+def currentVersion = fileExists(VERSION_FILE)
+? readFile(VERSION_FILE).trim()
+: "1.2.0"
 
+def parts = currentVersion.tokenize('.')
 
-    stages {
+int major = parts[0].toInteger()
+int minor = parts[1].toInteger()
+int patch = parts[2].toInteger()
 
+if (commitMsg.contains("BREAKING CHANGE")) {
+major++
+minor = 0
+patch = 0
+} else if (commitMsg.startsWith("feat:")) {
+minor++
+patch = 0
+} else {
+patch++
+}
 
-        stage('Checkout') {
-            steps {
-                checkout scm
+env.APP_VERSION = "${major}.${minor}.${patch}"
 
+writeFile file: VERSION_FILE, text: env.APP_VERSION
 
-                sh '''
-                    git fetch --tags || true
-                '''
-            }
-        }
+echo "Application version: ${env.APP_VERSION}"
+}
+}
+}
 
+stage('Azure Login') {
+steps {
+sh '''
+az login \
+--service-principal \
+--username "$AZURE_CLIENT_ID" \
+--password "$AZURE_CLIENT_SECRET" \
+--tenant "$AZURE_TENANT_ID"
 
-        stage('Calculate Version') {
-            steps {
-                script {
-                    def commitMsg = sh(
-                        script: "git log -1 --pretty=%B",
-                        returnStdout: true
-                    ).trim()
+az account set \
+--subscription "$AZURE_SUBSCRIPTION_ID"
+'''
+}
+}
 
+stage('Install pnpm') {
+steps {
+sh '''
+npm install -g pnpm
+pnpm --version
+'''
+}
+}
 
-                    def currentVersion = fileExists(VERSION_FILE)
-                        ? readFile(VERSION_FILE).trim()
-                        : "1.2.0"
+stage('Install Frontend Dependencies') {
+steps {
+dir("${STATIC_APP_PATH}") {
+sh 'pnpm install --frozen-lockfile'
+}
+}
+}
 
+stage('Build Frontend') {
+steps {
+dir("${STATIC_APP_PATH}") {
+sh 'pnpm build'
+}
+}
+}
 
-                    def parts = currentVersion.tokenize('.')
+stage('Install SWA CLI') {
+steps {
+sh '''
+npm install -g @azure/static-web-apps-cli
+swa --version
+'''
+}
+}
 
+stage('Deploy Frontend') {
+steps {
+dir("${STATIC_APP_PATH}") {
+sh '''
+swa deploy ./dist \
+--deployment-token "$SWA_DEPLOYMENT_TOKEN" \
+--env production
+'''
+}
+}
+}
 
-                    int major = parts[0].toInteger()
-                    int minor = parts[1].toInteger()
-                    int patch = parts[2].toInteger()
+stage('Install Backend Dependencies') {
+steps {
+dir("${BACKEND_PATH}") {
+sh '''
+python3 -m venv .venv
 
+. .venv/bin/activate
 
-                    if (commitMsg.contains("BREAKING CHANGE")) {
-                        major++
-                        minor = 0
-                        patch = 0
-                    } else if (commitMsg.startsWith("feat:")) {
-                        minor++
-                        patch = 0
-                    } else {
-                        patch++
-                    }
+pip install --upgrade pip
 
+pip install poetry
 
-                    env.APP_VERSION = "${major}.${minor}.${patch}"
+poetry install --no-interaction --no-root
+'''
+}
+}
+}
 
+stage('Run Alembic Migrations') {
+steps {
+dir("${BACKEND_PATH}") {
+withEnv(["DB_URL=${DB_URL}"]) {
 
-                    writeFile file: VERSION_FILE, text: env.APP_VERSION
+sh '''
+. .venv/bin/activate
 
+poetry run alembic upgrade head
+'''
+}
+}
+}
+}
 
-                    echo "Application version: ${env.APP_VERSION}"
-                }
-            }
-        }
+stage('Package Backend') {
+steps {
+dir("${BACKEND_PATH}") {
+sh '''
+zip -r ../backend.zip . \
+-x "*.git*" \
+-x "__pycache__/*" \
+-x "*.pyc" \
+-x ".venv/*"
+'''
+}
+}
+}
 
+stage('Deploy Backend') {
+steps {
+sh '''
+az webapp deploy \
+--resource-group "$AZURE_RESOURCE_GROUP" \
+--name "$APP_SERVICE" \
+--src-path backend.zip \
+--type zip
+'''
+}
+}
 
-        stage('Azure Login') {
-            steps {
-                sh '''
-                    az login \
-                      --service-principal \
-                      --username $AZURE_CLIENT_ID \
-                      --password $AZURE_CLIENT_SECRET \
-                      --tenant $AZURE_TENANT_ID
+stage('Restart App Service') {
+steps {
+sh '''
+az webapp restart \
+--resource-group "$AZURE_RESOURCE_GROUP" \
+--name "$APP_SERVICE"
+'''
+}
+}
 
+stage('Health Check') {
+steps {
+sh '''
+sleep 30
 
-                    az account set \
-                      --subscription $AZURE_SUBSCRIPTION_ID
-                '''
-            }
-        }
+curl --fail \
+https://${APP_SERVICE}.azurewebsites.net/health
+'''
+}
+}
+}
 
+post {
 
-        stage('Install pnpm') {
-            steps {
-                sh 'npm install -g pnpm'
-                sh 'pnpm --version'
-                sh 'pnpm add -D sass-embedded'
+success {
+echo "Deployment completed successfully."
+}
 
+failure {
+echo "Deployment failed."
+}
 
-            }
-        }
-
-
-        stage('Frontend Dependencies') {
-            steps {
-                dir("${STATIC_APP_PATH}") {
-                    sh 'pnpm ci --ignore-scripts'
-                    sh 'pnpm install --frozen-lockfile'
-                    sh 'pnpm approve-builds'
-                }
-            }
-        }
-
-
-        stage('Build Frontend') {
-            steps {
-                dir("${STATIC_APP_PATH}") {
-                    sh 'pnpm build'
-                }
-            }
-        }
-
-
-        stage('Install SWA CLI') {
-            steps {
-                sh '''
-                    npm install -g @azure/static-web-apps-cli
-                    swa --version
-                '''
-            }
-        }
-
-
-        stage('Deploy Frontend') {
-            steps {
-                dir("${STATIC_APP_PATH}") {
-                    sh '''
-                        swa deploy ./dist \
-                          --deployment-token $SWA_DEPLOYMENT_TOKEN \
-                          --env production
-                    '''
-                }
-            }
-        }
-
-
-        
-
-        stage('Verify Redis Connectivity') {
-            steps {
-                echo 'Redis should already exist. Verify connectivity using application health checks or Azure Monitor.'
-            }
-        }
-
-        stage('Package Backend') {
-            steps {
-                dir("${BACKEND_PATH}") {
-                    sh '''
-                        zip -r ../backend.zip . \
-                          -x "*.git*" \
-                          -x "__pycache__/*" \
-                          -x "*.pyc" \
-                          -x ".venv/*"
-                    '''
-                }
-            }
-        }
-
-        stage('Deploy Backend') {
-            steps {
-                sh '''
-                    az webapp deployment source config-zip \
-                      --resource-group $AZURE_RESOURCE_GROUP \
-                      --name $APP_SERVICE \
-                      --src backend.zip
-                '''
-            }
-        }
-
-        stage('Restart App Service') {
-            steps {
-                sh '''
-                    az webapp restart \
-                      --resource-group $AZURE_RESOURCE_GROUP \
-                      --name $APP_SERVICE
-                '''
-            }
-        }
-    }
+always {
+cleanWs()
+}
+}
 
 }
        
