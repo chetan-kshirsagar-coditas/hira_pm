@@ -185,6 +185,7 @@ stage('Package Backend') {
                 export PATH="$HOME/.local/bin:$PATH"
 
                 poetry --version
+                poetry self add poetry-plugin-export
 
                 poetry export \
                     -f requirements.txt \
