@@ -9,7 +9,7 @@ AZURE_CLIENT_SECRET = credentials('azure_client_secret')
 AZURE_TENANT_ID = credentials('azure-tenant-id')
 AZURE_SUBSCRIPTION_ID = credentials('azure_subscription_id')
 
-DB_URL = credentials('db_url')
+
 
 AZURE_RESOURCE_GROUP = 'taskflow-project-rg'
 
