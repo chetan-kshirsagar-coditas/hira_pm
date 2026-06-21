@@ -180,6 +180,12 @@ stage('Package Backend') {
 steps {
 dir("${BACKEND_PATH}") {
 sh '''
+poetry self add poetry-plugin-export || true
+poetry export \
+-f requirements.txt \
+--output requirements.txt \
+--without-hashes
+
 zip -r ../backend.zip . \
 -x "*.git*" \
 -x "__pycache__/*" \
