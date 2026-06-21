@@ -185,6 +185,7 @@ zip -r ../backend.zip . \
 -x "__pycache__/*" \
 -x "*.pyc" \
 -x ".venv/*"
+unzip -l backend.zip | head -30
 '''
 }
 }
