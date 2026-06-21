@@ -219,7 +219,7 @@ sh '''
 sleep 30
 
 curl --fail \
-https://${APP_SERVICE}.azurewebsites.net/health
+https://priyanshube..azurewebsites.net/health
 '''
 }
 }
