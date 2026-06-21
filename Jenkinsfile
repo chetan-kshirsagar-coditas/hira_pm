@@ -11,10 +11,10 @@ AZURE_SUBSCRIPTION_ID = credentials('azure_subscription_id')
 
 
 
-AZURE_RESOURCE_GROUP = 'taskflow-project-rg'
+AZURE_RESOURCE_GROUP = 'priyanshuchetanrg'
 
-SWA_APP_NAME = 'taskflow-frontend'
-APP_SERVICE = 'taskflow-api'
+SWA_APP_NAME = 'chetansFE'
+APP_SERVICE = 'PriyanshusBE'
 
 STATIC_APP_PATH = 'frontend'
 BACKEND_PATH = 'backend'
