@@ -177,24 +177,28 @@ stage('Run Alembic Migrations') {
 }
 
 stage('Package Backend') {
-steps {
-dir("${BACKEND_PATH}") {
-sh '''
-poetry self add poetry-plugin-export || true
-poetry export \
--f requirements.txt \
---output requirements.txt \
---without-hashes
+    steps {
+        dir("${BACKEND_PATH}") {
+            sh '''
+                poetry self add poetry-plugin-export || true
 
-zip -r ../backend.zip . \
--x "*.git*" \
--x "__pycache__/*" \
--x "*.pyc" \
--x ".venv/*"
-unzip -l backend.zip | head -30
-'''
-}
-}
+                poetry export \
+                    -f requirements.txt \
+                    --output requirements.txt \
+                    --without-hashes
+
+                zip -r ../backend.zip . \
+                    -x "*.git*" \
+                    -x "__pycache__/*" \
+                    -x "*.pyc" \
+                    -x ".venv/*" \
+                    -x ".pytest_cache/*" \
+                    -x ".mypy_cache/*"
+
+                unzip -l ../backend.zip | head -30
+            '''
+        }
+    }
 }
 
 stage('Deploy Backend') {
