@@ -231,7 +231,7 @@ sh '''
 sleep 30
 
 curl --fail \
-https://priyanshube.azurewebsites.net/health
+https://priyanshusbe-hratb9fwhqc9awh8.westeurope-01.azurewebsites.net/health
 '''
 }
 }
