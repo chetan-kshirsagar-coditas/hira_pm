@@ -26,7 +26,7 @@ class Setting(BaseSettings):
     SUBSCRIPTION_PLAN_COSTS: list[float] = os.getenv("SUBSCRIPTION_PLAN_COSTS")
     SUBSCRIPTION_PLAN_DETAILS: list[str] = os.getenv("SUBSCRIPTION_PLAN_DETAILS")
 
-    PRIVATE_KEY_PATH: str = os.getenv("PRIVATE_KEY_PATH")
+    PRIVATE_KEY: str = os.getenv("PRIVATE_KEY")
     ALGORITHM: str = os.getenv("ALGORITHM")
 
     AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID")
