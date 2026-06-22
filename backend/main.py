@@ -15,7 +15,7 @@ app.include_router(project_router)
 app.add_middleware(
        CORSMiddleware,
        allow_credentials=True,
-       allow_origins=["*"],
+       allow_origins=["https://lemon-sand-07a059e03.7.azurestaticapps.net"],
        allow_methods=["*"],
        allow_headers=["*"],
    )
