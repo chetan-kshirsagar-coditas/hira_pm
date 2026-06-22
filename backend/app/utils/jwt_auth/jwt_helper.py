@@ -13,18 +13,20 @@ class JWTHelper:
                     f.read(),
                 )
         elif key_type == 'private':
-            with open(settings.PRIVATE_KEY_PATH, 'rb') as f:
-                return serialization.load_pem_private_key(
-                    f.read(),
-                    password=None
-                )
+            #with open(settings.PRIVATE_KEY_PATH, 'rb') as f:
+                #return serialization.load_pem_private_key(
+                    #f.read(),
+                    #password=None
+                #)
+            # for testing purpose, hardcoding key
+            return key_url
         else:
             return None
         
 
     @staticmethod
     def generate_jwt(payload: dict):    
-        return {"access_token" : jwt.encode(payload, key=JWTHelper.load_key(settings.PRIVATE_KEY_PATH, 'private'), algorithm=settings.ALGORITHM),
+        return {"access_token" : jwt.encode(payload, key=JWTHelper.load_key(settings.PRIVATE_KEY, 'private'), algorithm=settings.ALGORITHM),
                 "token_type" : "bearer"}
 
     @staticmethod
